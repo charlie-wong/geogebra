@@ -9244,7 +9244,6 @@ public abstract class EuclidianController implements SpecialPointsListener {
 				// clear selection to be able to drag created shape with shape
 				// tool
 				selection.clearSelectedGeos();
-				view.setDefaultShapeStyle();
 				getShapeMode().handleMousePressedForShapeMode(event);
 			} else {
 				if (d != null && view.getBoundingBox() != null
@@ -9264,7 +9263,6 @@ public abstract class EuclidianController implements SpecialPointsListener {
 						mode = EuclidianConstants.MODE_MOVE;
 					} else {
 						selection.clearSelectedGeos();
-						view.setDefaultShapeStyle();
 						getShapeMode().handleMousePressedForShapeMode(event);
 					}
 				} else if (selection.getSelectedGeos().size() == 1
@@ -9280,7 +9278,6 @@ public abstract class EuclidianController implements SpecialPointsListener {
 				// shape hit but not selected
 				} else {
 					selection.clearSelectedGeos();
-					view.setDefaultShapeStyle();
 					getShapeMode().handleMousePressedForShapeMode(event);
 				}
 			}

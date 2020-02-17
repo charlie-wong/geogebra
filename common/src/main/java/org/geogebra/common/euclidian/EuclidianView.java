@@ -205,16 +205,16 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	/**
 	 * fill color of shape (transparent)
 	 */
-	private GColor shapeFillCol = GColor.newColor(192,
+	private final GColor shapeFillCol = GColor.newColor(192,
 			192, 192, 0.0);
 	/**
 	 * object color of shape (black by default)
 	 */
-	private GColor shapeObjCol = GColor.BLACK;
+	private final GColor shapeObjCol = GColor.BLACK;
 	/**
 	 * stroke of shape
 	 */
-	private GBasicStroke shapeStroke = AwtFactory
+	private final GBasicStroke shapeStroke = AwtFactory
 			.getPrototype().newBasicStroke(2.0f, GBasicStroke.CAP_BUTT,
 					GBasicStroke.JOIN_MITER);
 	private boolean isRounded = false;
@@ -2835,49 +2835,6 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		this.shapePolygon = shapePolygon;
 	}
 
-	public GColor getShapeFillCol() {
-		return shapeFillCol;
-	}
-
-	public void setShapeFillCol(GColor shapeFillCol) {
-		this.shapeFillCol = shapeFillCol;
-	}
-
-	public GColor getShapeObjCol() {
-		return shapeObjCol;
-	}
-
-	public void setShapeObjCol(GColor shapeObjCol) {
-		this.shapeObjCol = shapeObjCol;
-	}
-
-	/**
-	 * @return stroke for shapes
-	 */
-	public GBasicStroke getShapeStroke() {
-		return shapeStroke;
-	}
-
-	/**
-	 * @param shapeStroke
-	 *            stroke for shapes
-	 */
-	public void setShapeStroke(GBasicStroke shapeStroke) {
-		this.shapeStroke = shapeStroke;
-	}
-
-	/**
-	 * reset style of shape, needed by new shape
-	 */
-	public void setDefaultShapeStyle() {
-		setShapeFillCol(GColor.newColor(192,
-				192, 192, 0.0));
-		setShapeObjCol(GColor.BLACK);
-		setShapeStroke(AwtFactory
-				.getPrototype().newBasicStroke(2.0f, GBasicStroke.CAP_BUTT,
-						GBasicStroke.JOIN_MITER));
-	}
-
 	@Override
 	public double[] getAxesCross() {
 		return axisCross;
@@ -3755,6 +3712,13 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		}
 	}
 
+	protected void drawShape(GGraphics2D g2, GShape shape) {
+		if (shape != null){
+			drawShape(g2, shapeFillCol, shapeObjCol,
+					shapeStroke, shape);
+		}
+	}
+
 	/**
 	 * Draws rectangle with given options
 	 * 
@@ -4284,32 +4248,11 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	}
 
 	/**
-	 * @return shapeRectangle
-	 */
-	public GRectangle getShapeRectangle() {
-		return shapeRectangle;
-	}
-
-	/**
 	 *
 	 * @return mask
 	 */
 	public GRectangle getMaskPreview() {
 		return maskPreview;
-	}
-
-	/**
-	 * @return shapeEllipse
-	 */
-	public GEllipse2DDouble getShapeEllipse() {
-		return shapeEllipse;
-	}
-
-	/**
-	 * @return shapeLine
-	 */
-	public GLine2D getShapeLine() {
-		return shapeLine;
 	}
 
 	/**
@@ -6439,13 +6382,11 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 * @param g2 Graphics to draw to.
 	 */
 	void drawMaskPreview(GGraphics2D g2) {
-		if (maskPreview == null) {
-			return;
+		if (maskPreview != null) {
+			drawShape(g2, GeoGebraColorConstants.MEBIS_MASK,
+					GeoGebraColorConstants.MEBIS_MASK,
+					null, maskPreview);
 		}
-
-		drawShape(g2, GeoGebraColorConstants.MEBIS_MASK,
-				GeoGebraColorConstants.MEBIS_MASK,
-				null, maskPreview);
 	}
 
 	/**
@@ -6505,5 +6446,13 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		if (euclidianController.isMultiSelection()) {
 			euclidianController.showDynamicStylebar();
 		}
+	}
+
+	public void drawShapePreview(GGraphics2D g2) {
+		drawShape(g2, shapeRectangle);
+		drawMaskPreview(g2);
+		drawShape(g2, shapeEllipse);
+		drawShape(g2, shapeLine);
+		drawShape(g2, shapePolygon);
 	}
 }
