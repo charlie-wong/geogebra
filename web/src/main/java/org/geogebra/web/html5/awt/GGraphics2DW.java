@@ -41,10 +41,10 @@ import com.himamis.retex.renderer.web.graphics.JLMContext2d;
 public class GGraphics2DW implements GGraphics2DWI {
 
 	protected final Canvas canvas;
-	private final JLMContext2d context;
+	private JLMContext2d context;
 
 	private GFontW currentFont = new GFontW("normal");
-	private GColor color = GColor.newColor(255, 255, 255, 255);
+	protected GColor color = GColor.newColor(255, 255, 255, 255);
 
 	GPaint currentPaint = GColor.newColor(255, 255, 255, 255);
 
@@ -89,6 +89,10 @@ public class GGraphics2DW implements GGraphics2DWI {
 
 		this.context = (JLMContext2d) ctx.cast();
 		this.context.initTransform();
+	}
+
+	protected void setContext(JLMContext2d context) {
+		this.context = context;
 	}
 
 	/**
@@ -1027,6 +1031,16 @@ public class GGraphics2DW implements GGraphics2DWI {
 	@Override
 	public boolean isAttached() {
 		return canvas != null && canvas.isAttached();
+	}
+
+	@Override
+	public int embed() {
+		return 0; // no layers
+	}
+
+	@Override
+	public void resetLayer() {
+		// no layers
 	}
 
 }

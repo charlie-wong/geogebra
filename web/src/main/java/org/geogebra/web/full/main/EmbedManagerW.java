@@ -41,6 +41,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Widget;
@@ -87,6 +88,17 @@ public class EmbedManagerW implements EmbedManager {
 			}
 		} else {
 			addCalcEmbed(drawEmbed);
+		}
+	}
+
+	/**
+	 * @param embed drawable
+	 * @param layer z-index
+	 */
+	public void setLayer(DrawEmbed embed, int layer){
+		Element element = widgets.get(embed).getGreatParent().getElement();
+		if (element.hasClassName("background")) {
+			element.getStyle().setZIndex(layer);
 		}
 	}
 
@@ -248,9 +260,9 @@ public class EmbedManagerW implements EmbedManager {
 		boolean background = drawEmbed.getGeoEmbed().isBackground();
 		Dom.toggleClass(frame.getGreatParent(), "background",
 				background);
-
 		if (!background) {
 			app.getMaskWidgets().masksToForeground();
+			frame.getGreatParent().getElement().getStyle().clearZIndex();
 		}
 	}
 

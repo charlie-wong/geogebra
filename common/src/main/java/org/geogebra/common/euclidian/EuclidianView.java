@@ -27,6 +27,7 @@ import org.geogebra.common.euclidian.draw.DrawAngle;
 import org.geogebra.common.euclidian.draw.DrawAudio;
 import org.geogebra.common.euclidian.draw.DrawConic;
 import org.geogebra.common.euclidian.draw.DrawDropDownList;
+import org.geogebra.common.euclidian.draw.DrawEmbed;
 import org.geogebra.common.euclidian.draw.DrawImage;
 import org.geogebra.common.euclidian.draw.DrawInputBox;
 import org.geogebra.common.euclidian.draw.DrawLine;
@@ -3557,18 +3558,6 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 *            graphics
 	 */
 	public void paint(GGraphics2D g2) {
-		paint(g2, null);
-	}
-
-	/**
-	 * Paints content of this view.
-	 * 
-	 * @param g2
-	 *            graphics
-	 * @param g3
-	 *            background
-	 */
-	public void paint(GGraphics2D g2, GGraphics2D g3) {
 		synchronized (kernel.getConcurrentModificationLock()) {
 			// synchronized means that no two Threads can simultaneously
 			// enter any blocks locked by the same lock object,
@@ -3576,7 +3565,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 			// these blocks... as there is only one lock object and
 			// these methods probably do not call other synchronized
 			// code blocks, it probably does not cause any problem
-			companion.paint(g2, g3);
+			companion.paint(g2);
 			if (getEuclidianController().getPen().needsRepaint()) {
 				getEuclidianController().getPen().doRepaintPreviewLine(g2);
 			}
@@ -3713,7 +3702,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	}
 
 	protected void drawShape(GGraphics2D g2, GShape shape) {
-		if (shape != null){
+		if (shape != null) {
 			drawShape(g2, shapeFillCol, shapeObjCol,
 					shapeStroke, shape);
 		}
@@ -6448,11 +6437,19 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		}
 	}
 
+	/**
+	 * Draw preview of the current shape
+	 * @param g2 graphics
+	 */
 	public void drawShapePreview(GGraphics2D g2) {
 		drawShape(g2, shapeRectangle);
 		drawMaskPreview(g2);
 		drawShape(g2, shapeEllipse);
 		drawShape(g2, shapeLine);
 		drawShape(g2, shapePolygon);
+	}
+
+	public void embed(GGraphics2D g2, DrawEmbed drawEmbed) {
+		//web only
 	}
 }

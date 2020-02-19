@@ -17,7 +17,6 @@
 	// comes from youtube player, you must not change this.
 	$z_mow_video: 50;
 	$z_mow_video_background: 12;
-	$z_mow_foreground: 50;
 	$z_mask: 50;
 
 /*****************
@@ -503,7 +502,6 @@
 			position: absolute; 
 			top: 0px;
 			bottom: 0px;
-			z-index: 0; 
 		}	
 
 		.cursor_pen,
@@ -520,8 +518,7 @@
 			position: absolute; 
 			top: 0px;
 			bottom: 0px;
-			z-index: $z_mow_foreground;
-		 }		
+		 }
 	}
 
 	.mowMenuSeparator {

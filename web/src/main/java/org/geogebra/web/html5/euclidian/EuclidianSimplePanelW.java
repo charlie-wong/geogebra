@@ -133,12 +133,6 @@ public class EuclidianSimplePanelW extends AbsolutePanel implements
 	}
 
 	@Override
-	public Canvas getBackgroundCanvas() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void reset() {
 		oldWidth = 0;
 		oldHeight = 0;

@@ -354,4 +354,15 @@ public class GGraphics2DE implements GGraphics2DWI {
 		return false;
 	}
 
+	@Override
+	public int embed() {
+
+		return 0;
+	}
+
+	@Override
+	public void resetLayer() {
+
+	}
+
 }

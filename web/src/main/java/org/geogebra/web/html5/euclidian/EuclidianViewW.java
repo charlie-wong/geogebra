@@ -1,6 +1,5 @@
 package org.geogebra.web.html5.euclidian;
 
-import com.google.gwt.dom.client.Document;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GBufferedImage;
 import org.geogebra.common.awt.GColor;
@@ -19,6 +18,7 @@ import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.PenPreviewLine;
 import org.geogebra.common.euclidian.SymbolicEditor;
 import org.geogebra.common.euclidian.background.BackgroundType;
+import org.geogebra.common.euclidian.draw.DrawEmbed;
 import org.geogebra.common.euclidian.draw.DrawVideo;
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.factories.AwtFactory;
@@ -40,6 +40,7 @@ import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.awt.GDimensionW;
 import org.geogebra.web.html5.awt.GFontW;
 import org.geogebra.web.html5.awt.GGraphics2DW;
+import org.geogebra.web.html5.awt.LayeredGGraphicsW;
 import org.geogebra.web.html5.awt.PrintableW;
 import org.geogebra.web.html5.css.GuiResourcesSimple;
 import org.geogebra.web.html5.gawt.GBufferedImageW;
@@ -65,6 +66,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.NodeList;
@@ -115,7 +117,6 @@ public class EuclidianViewW extends EuclidianView implements
 	private static final int ICON_MARGIN = 4;
 
 	private GGraphics2DWI g2p = null;
-	private GGraphics2DWI g2bg = null;
 	private GGraphics2D g2dtemp;
 	private GGraphics2DW g4copy = null;
 	private GColor backgroundColor = GColor.WHITE;
@@ -298,19 +299,12 @@ public class EuclidianViewW extends EuclidianView implements
 
 	@Override
 	public final void paintBackground(GGraphics2D g2) {
-		GGraphics2DWI g2w;
-		if (app.isWhiteboardActive()) {
-			g2w = g2bg;
-			g2w.clearAll();
-		} else {
-			g2w = (GGraphics2DWI) g2;
-		}
 		if (isGridOrAxesShown() || hasBackgroundImages() || isTraceDrawn()
 				|| appW.showResetIcon()
 		        || kernel.needToShowAnimationButton()) {
-			g2w.drawImage(bgImage, 0, 0);
+			g2.drawImage(bgImage, 0, 0);
 		} else {
-			g2w.fillWith(getBackgroundCommon());
+			((GGraphics2DWI) g2).fillWith(getBackgroundCommon());
 		}
 	}
 
@@ -320,12 +314,13 @@ public class EuclidianViewW extends EuclidianView implements
 	 */
 	public final void doRepaint2() {
 		long time = System.currentTimeMillis();
+		g2p.resetLayer();
 		updateBackgroundIfNecessary();
 
 		if (app.isWhiteboardActive()) {
 			g2p.clearAll();
 		}
-		paint(g2p, g2bg);
+		paint(g2p);
 
 		// if we have pen tool in action
 		// repaint the preview line
@@ -647,9 +642,6 @@ public class EuclidianViewW extends EuclidianView implements
 	 */
 	public void setCoordinateSpaceSize(int width, int height) {
 		g2p.setCoordinateSpaceSize(width, height);
-		if (app.isWhiteboardActive()) {
-			g2bg.setCoordinateSpaceSize(width, height);
-		}
 		try {
 			// just resizing the AbsolutePanelSmart, not the whole of DockPanel
 			g2p.getElement().getParentElement().getStyle()
@@ -778,38 +770,15 @@ public class EuclidianViewW extends EuclidianView implements
 		return new MyEuclidianViewPanel(this);
 	}
 
-	private void initBackgroundCanvas(EuclidianPanelWAbstract euclidianViewPanel) {
-		final Canvas bg = euclidianViewPanel.getBackgroundCanvas();
-		if (bg != null) {
-			this.g2bg = new GGraphics2DW(bg);
-			g2bg.setDevicePixelRatio(appW.getPixelRatio());
-		} else {
-			this.g2bg = new GGraphics2DE();
-		}
-	}
-
-	/**
-	 * @deprecated - double canvas should be used in all apps
-	 */
-	@Deprecated
-	public void initBgCanvas() {
-		if (this.g2bg == null) {
-			initBackgroundCanvas(evPanel);
-		}
-	}
-
 	private void initBaseComponents(EuclidianPanelWAbstract euclidianViewPanel,
 			EuclidianController euclidiancontroller, int newEvNo,
 			EuclidianSettings settings) {
 
 		final Canvas canvas = euclidianViewPanel.getCanvas();
 		this.evNo = newEvNo;
-		if (app.isWhiteboardActive()) {
-			initBackgroundCanvas(euclidianViewPanel);
-		}
 
 		if (canvas != null) {
-			this.g2p = new GGraphics2DW(canvas);
+			this.g2p = new LayeredGGraphicsW(canvas, euclidianViewPanel.getAbsolutePanel());
 			g2p.setDevicePixelRatio(appW.getPixelRatio());
 			if (appW.getArticleElement().isDebugGraphics()) {
 				g2p.startDebug();
@@ -821,7 +790,7 @@ public class EuclidianViewW extends EuclidianView implements
 		initView(true);
 		attachView();
 
-		((EuclidianControllerW) euclidiancontroller).setView(this);
+		euclidiancontroller.setView(this);
 
 		if (getViewID() != App.VIEW_TEXT_PREVIEW) {
 			registerKeyHandlers(canvas);
@@ -904,7 +873,7 @@ public class EuclidianViewW extends EuclidianView implements
 	 * @param anyway
 	 *            whether to update even unattached view
 	 */
-	static final public void updateFirstAndLast(EuclidianViewWInterface ev,
+	static public void updateFirstAndLast(EuclidianViewWInterface ev,
 			boolean anyway) {
 		if (ev.getCanvasElement() == null) {
 			return;
@@ -1894,4 +1863,11 @@ public class EuclidianViewW extends EuclidianView implements
 	public AppW getApplication() {
 		return (AppW) super.getApplication();
 	}
+
+	@Override
+	public void embed(GGraphics2D g2, DrawEmbed e) {
+		int layer = ((GGraphics2DWI) g2).embed();
+		getApplication().getEmbedManager().setLayer(e, layer);
+	}
+
 }

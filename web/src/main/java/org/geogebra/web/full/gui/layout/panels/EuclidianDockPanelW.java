@@ -19,7 +19,6 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 	EuclidianPanel euclidianpanel;
 
 	Canvas eview1 = null; // static foreground
-	Canvas eviewBg = null; // static background
 	private boolean doubleCanvas = false;
 
 	/**
@@ -89,12 +88,7 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 			eview1 = Canvas.createIfSupported();
 			TestHarness.setAttr(eview1, "euclidianView");
 			if (doubleCanvas) {
-				eviewBg = Canvas.createIfSupported();
-				if (eviewBg != null) {
-					eviewBg.addStyleName("mowBackground");
-					eview1.addStyleName("mowForeground");
-				}
-				addCanvas(eviewBg);
+				eview1.addStyleName("mowForeground");
 				addCanvas(eview1);
 				euclidianpanel.addStyleName("mowDoubleCanvas");
 			} else {
@@ -121,11 +115,6 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 	@Override
 	public Canvas getCanvas() {
 		return eview1;
-	}
-
-	@Override
-	public Canvas getBackgroundCanvas() {
-		return eviewBg;
 	}
 
 	@Override

@@ -80,6 +80,7 @@ public class DrawEmbed extends Drawable implements DrawWidget, RemoveNeeded {
 	@Override
 	public void draw(GGraphics2D g2) {
 		if (view.getApplication().getExportType() == ExportType.NONE) {
+			view.embed(g2, this);
 			return;
 		}
 		MyImage preview = view.getApplication().getEmbedManager().getPreview(this);
