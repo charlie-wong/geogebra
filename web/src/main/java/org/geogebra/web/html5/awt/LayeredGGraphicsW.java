@@ -12,6 +12,7 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 	private final Panel canvasParent;
 	ArrayList<JLMContext2d> layers = new ArrayList<>();
 	int currentLayer = 0;
+	int previewLayer = 0;
 
 	/**
 	 * @param canvas Primary canvas
@@ -23,30 +24,37 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 		layers.add(getContext());
 	}
 
+	/**
+	 * @return z-index for embedded item
+	 */
 	public int embed() {
 		currentLayer++;
-		CanvasElement currentCanvas = getContext().getCanvas();
 		if (layers.size() <= currentLayer) {
-			Canvas nextLayer = Canvas.createIfSupported();
-			nextLayer.addStyleName("layer" + currentLayer); // only for debugging purposes
-			nextLayer.setCoordinateSpaceHeight(currentCanvas.getHeight());
-			nextLayer.setCoordinateSpaceWidth(currentCanvas.getWidth());
-			Style style = nextLayer.getCanvasElement().getStyle();
-			style.setPosition(Style.Position.ABSOLUTE);
-			style.setZIndex(2 * currentLayer);
-			canvasParent.add(nextLayer);
-			JLMContext2d nextContext = JLMContext2d.forCanvas(nextLayer);
-			layers.add(nextContext);
+			addLayer();
 		}
 		color = null;
-		updateContext();
-		getContext().clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
-		getContext().getCanvas().getStyle().setDisplay(Style.Display.BLOCK);
+		updateAndClear();
 		return 2 * currentLayer - 1;
 	}
 
-	private void updateContext() {
+	private void updateAndClear() {
 		setContext(layers.get(currentLayer));
+		clearAll();
+		getContext().getCanvas().getStyle().setDisplay(Style.Display.BLOCK);
+	}
+
+	private void addLayer() {
+		CanvasElement currentCanvas = getContext().getCanvas();
+		Canvas nextLayer = Canvas.createIfSupported();
+		nextLayer.addStyleName("layer" + layers.size()); // only for debugging purposes
+		nextLayer.setCoordinateSpaceHeight(currentCanvas.getHeight());
+		nextLayer.setCoordinateSpaceWidth(currentCanvas.getWidth());
+		Style style = nextLayer.getCanvasElement().getStyle();
+		style.setPosition(Style.Position.ABSOLUTE);
+		style.setZIndex(2 * layers.size());
+		canvasParent.add(nextLayer);
+		JLMContext2d nextContext = JLMContext2d.forCanvas(nextLayer);
+		layers.add(nextContext);
 	}
 
 	@Override
@@ -55,6 +63,16 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 		for (int i = 1; i < layers.size(); i++) {
 			layers.get(i).getCanvas().getStyle().setDisplay(Style.Display.NONE);
 		}
-		updateContext();
+		setContext(layers.get(0));
+	}
+
+	@Override
+	public void setPreviewLayer() {
+		if (previewLayer <= 0) {
+			previewLayer = layers.size();
+			addLayer();
+		}
+		currentLayer = previewLayer;
+		updateAndClear();
 	}
 }

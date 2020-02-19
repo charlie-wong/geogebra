@@ -63,4 +63,6 @@ public interface GGraphics2DWI extends GGraphics2D {
 	int embed();
 
 	void resetLayer();
+
+	void setPreviewLayer();
 }

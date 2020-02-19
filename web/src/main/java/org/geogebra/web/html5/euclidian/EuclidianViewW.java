@@ -314,14 +314,14 @@ public class EuclidianViewW extends EuclidianView implements
 	 */
 	public final void doRepaint2() {
 		long time = System.currentTimeMillis();
-		g2p.resetLayer();
-		updateBackgroundIfNecessary();
-
-		if (app.isWhiteboardActive()) {
-			g2p.clearAll();
+		if (!cacheGraphics) {
+			g2p.resetLayer();
+			updateBackgroundIfNecessary();
+			paint(g2p);
+		} else {
+			g2p.setPreviewLayer();
+			getEuclidianController().getPen().repaintIfNeeded(g2p);
 		}
-		paint(g2p);
-
 		// if we have pen tool in action
 		// repaint the preview line
 		lastRepaint = System.currentTimeMillis() - time;
@@ -741,14 +741,6 @@ public class EuclidianViewW extends EuclidianView implements
 	public void createImage() {
 		bgImage = makeImage();
 		bgGraphics = bgImage.createGraphics();
-	}
-
-	@Override
-	public GBufferedImage getCacheGraphics() {
-		if (cacheGraphics == null || cacheImage == null) {
-			cacheImage = makeImage();
-		}
-		return cacheImage;
 	}
 
 	private GBufferedImage makeImage() {

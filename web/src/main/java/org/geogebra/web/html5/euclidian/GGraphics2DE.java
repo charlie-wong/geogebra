@@ -356,12 +356,16 @@ public class GGraphics2DE implements GGraphics2DWI {
 
 	@Override
 	public int embed() {
-
 		return 0;
 	}
 
 	@Override
 	public void resetLayer() {
+
+	}
+
+	@Override
+	public void setPreviewLayer() {
 
 	}
 

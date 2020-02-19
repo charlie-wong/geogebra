@@ -310,7 +310,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	/** kernel */
 	protected Kernel kernel;
 	/** cache for bottom layers */
-	protected GGraphics2D cacheGraphics;
+	protected boolean cacheGraphics;
 
 	private final static int[] lineTypes = {
 			EuclidianStyleConstants.LINE_TYPE_FULL,
@@ -522,8 +522,6 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	private DrawBackground drawBg = null;
 	private final HitDetector hitDetector;
 	private boolean isResetIconSelected = false;
-
-	private Drawable maxCachedDrawable;
 
 	/** @return line types */
 	public static final Integer[] getLineTypes() {
@@ -3444,7 +3442,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 */
 	final private void drawGeometricObjects(GGraphics2D g2) {
 		// only draw drawables we need
-		allDrawableList.drawAll(g2, maxCachedDrawable);
+		allDrawableList.drawAll(g2);
 
 		if (getEuclidianController().isMultiSelection()) {
 			getEuclidianController()
@@ -3459,9 +3457,6 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 *            graphics
 	 */
 	public void drawObjects(GGraphics2D g2) {
-		if (maxCachedDrawable != null && getCacheGraphics() != null) {
-			g2.drawImage(getCacheGraphics(), 0, 0);
-		}
 		drawGeometricObjects(g2);
 		drawActionObjects(g2);
 
@@ -3499,7 +3494,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 
 		// GGB-977
 		setBackgroundUpdating(true);
-		bgImageList.drawAll(g, null);
+		bgImageList.drawAll(g);
 		setBackgroundUpdating(false);
 
 		drawBackground(g, false);
@@ -3566,9 +3561,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 			// these methods probably do not call other synchronized
 			// code blocks, it probably does not cause any problem
 			companion.paint(g2);
-			if (getEuclidianController().getPen().needsRepaint()) {
-				getEuclidianController().getPen().doRepaintPreviewLine(g2);
-			}
+			getEuclidianController().getPen().repaintIfNeeded(g2);
 		}
 	}
 
@@ -6224,19 +6217,14 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 * Invalidate cached graphics
 	 */
 	public void invalidateCache() {
-		maxCachedDrawable = null;
-		cacheGraphics = null;
+		cacheGraphics = false;
 	}
 
 	/**
 	 * Cache all drawables
 	 */
 	public void cacheGraphics() {
-		if (getCacheGraphics() != null && allDrawableList.size() > 0) {
-			cacheGraphics = getCacheGraphics().createGraphics();
-			drawGeometricObjects(cacheGraphics);
-			maxCachedDrawable = allDrawableList.get(allDrawableList.size() - 1);
-		}
+		cacheGraphics = true;
 	}
 
 	protected GBufferedImage getCacheGraphics() {
@@ -6249,7 +6237,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	protected void resetBackgroundAndCache() {
 		bgImage = null;
 		bgGraphics = null;
-		cacheGraphics = null;
+		cacheGraphics = false;
 	}
 
 	/**
