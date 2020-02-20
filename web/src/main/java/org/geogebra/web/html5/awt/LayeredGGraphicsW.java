@@ -27,6 +27,7 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 	/**
 	 * @return z-index for embedded item
 	 */
+	@Override
 	public int embed() {
 		currentLayer++;
 		if (layers.size() <= currentLayer) {
@@ -90,7 +91,7 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 	}
 
 	@Override
-	public void setCanvasSize(int width, int height){
+	public void setCanvasSize(int width, int height) {
 		super.setCanvasSize(width, height);
 		for (int i = 1; i < layers.size(); i++) {
 			CanvasElement canvas = layers.get(i).getCanvas();

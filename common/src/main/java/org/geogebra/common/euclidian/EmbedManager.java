@@ -124,14 +124,18 @@ public interface EmbedManager {
 	/**
 	 * Permanently remove cached embeds
 	 */
-	public void clearStoredEmbeds();
+	void clearStoredEmbeds();
 
 	/**
 	 * opens the  Graspable math tool
 	 */
-	public void openGraspableMTool();
+	void openGraspableMTool();
 
 	void initAppEmbed(GeoEmbed ge);
 
-	void setLayer(DrawEmbed e, int layer);
+	/**
+	 * @param embed drawable
+	 * @param layer z-index
+	 */
+	void setLayer(DrawEmbed embed, int layer);
 }

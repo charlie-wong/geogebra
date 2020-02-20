@@ -309,8 +309,6 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	protected boolean batchUpdate;
 	/** kernel */
 	protected Kernel kernel;
-	/** cache for bottom layers */
-	protected boolean cacheGraphics;
 
 	private final static int[] lineTypes = {
 			EuclidianStyleConstants.LINE_TYPE_FULL,
@@ -6217,14 +6215,14 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 * Invalidate cached graphics
 	 */
 	public void invalidateCache() {
-		cacheGraphics = false;
+		// web only
 	}
 
 	/**
 	 * Cache all drawables
 	 */
 	public void cacheGraphics() {
-		cacheGraphics = true;
+		// web only
 	}
 
 	protected GBufferedImage getCacheGraphics() {
@@ -6237,7 +6235,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	protected void resetBackgroundAndCache() {
 		bgImage = null;
 		bgGraphics = null;
-		cacheGraphics = false;
+		invalidateCache();
 	}
 
 	/**

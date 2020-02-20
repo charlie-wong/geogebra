@@ -91,11 +91,8 @@ public class EmbedManagerW implements EmbedManager {
 		}
 	}
 
-	/**
-	 * @param embed drawable
-	 * @param layer z-index
-	 */
-	public void setLayer(DrawEmbed embed, int layer){
+	@Override
+	public void setLayer(DrawEmbed embed, int layer) {
 		Element element = widgets.get(embed).getGreatParent().getElement();
 		if (element.hasClassName("background")) {
 			element.getStyle().setZIndex(layer);

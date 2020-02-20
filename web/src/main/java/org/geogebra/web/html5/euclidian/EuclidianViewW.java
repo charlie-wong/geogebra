@@ -173,6 +173,8 @@ public class EuclidianViewW extends EuclidianView implements
 	// needed to make sure outline doesn't get dashed
 	private GBasicStroke outlineStroke = AwtFactory.getPrototype()
 			.newBasicStroke(3, GBasicStroke.CAP_BUTT, GBasicStroke.JOIN_BEVEL);
+	/** cache for bottom layers */
+	private boolean cacheGraphics;
 
 	/**
 	 * @param euclidianViewPanel
@@ -1860,6 +1862,17 @@ public class EuclidianViewW extends EuclidianView implements
 	public void embed(GGraphics2D g2, DrawEmbed e) {
 		int layer = ((GGraphics2DWI) g2).embed();
 		getApplication().getEmbedManager().setLayer(e, layer);
+	}
+
+	public void invalidateCache() {
+		cacheGraphics = false;
+	}
+
+	/**
+	 * Cache all drawables
+	 */
+	public void cacheGraphics() {
+		cacheGraphics = true;
 	}
 
 }
