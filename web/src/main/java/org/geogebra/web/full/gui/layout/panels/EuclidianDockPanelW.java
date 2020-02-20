@@ -45,10 +45,8 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 		// dockpanels works for applets
 
 		this.doubleCanvas = doubleCanvas;
-		if (stylebar) {
-			component = loadComponent();
-		} else {
-			component = loadComponent();
+		component = loadComponent();
+		if (!stylebar) {
 			buildDockPanel();
 		}
 	}
@@ -88,12 +86,12 @@ public class EuclidianDockPanelW extends EuclidianDockPanelWAbstract
 			eview1 = Canvas.createIfSupported();
 			TestHarness.setAttr(eview1, "euclidianView");
 			if (doubleCanvas) {
-				eview1.addStyleName("mowForeground");
-				addCanvas(eview1);
+				if(eview1 != null) {
+					eview1.addStyleName("mowForeground");
+				}
 				euclidianpanel.addStyleName("mowDoubleCanvas");
-			} else {
-				addCanvas(eview1);
 			}
+			addCanvas(eview1);
 		}
 		return euclidianpanel;
 	}

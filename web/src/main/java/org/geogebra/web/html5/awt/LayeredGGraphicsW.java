@@ -60,6 +60,7 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 	@Override
 	public void resetLayer() {
 		currentLayer = 0;
+		previewLayer = 0;
 		for (int i = 1; i < layers.size(); i++) {
 			layers.get(i).getCanvas().getStyle().setDisplay(Style.Display.NONE);
 		}
@@ -69,10 +70,32 @@ public class LayeredGGraphicsW extends GGraphics2DW {
 	@Override
 	public void setPreviewLayer() {
 		if (previewLayer <= 0) {
-			previewLayer = layers.size();
-			addLayer();
+			previewLayer = currentLayer + 1;
 		}
 		currentLayer = previewLayer;
+		if (currentLayer >= layers.size()) {
+			addLayer();
+		}
 		updateAndClear();
+	}
+
+	@Override
+	public void setPixelSize(int width, int height) {
+		super.setPixelSize(width, height);
+		for (int i = 1; i < layers.size(); i++) {
+			Style style = layers.get(i).getCanvas().getStyle();
+			style.setWidth(width, Style.Unit.PX);
+			style.setHeight(height, Style.Unit.PX);
+		}
+	}
+
+	@Override
+	public void setCanvasSize(int width, int height){
+		super.setCanvasSize(width, height);
+		for (int i = 1; i < layers.size(); i++) {
+			CanvasElement canvas = layers.get(i).getCanvas();
+			canvas.setWidth(physicalPX(width));
+			canvas.setHeight(physicalPX(height));
+		}
 	}
 }

@@ -488,27 +488,27 @@ public class GGraphics2DW implements GGraphics2DWI {
 		return currentFont;
 	}
 
-	private int physicalPX(int logicalPX) {
+	int physicalPX(int logicalPX) {
 		return (int) (logicalPX * getDevicePixelRatio());
 	}
 
 	@Override
 	public void setCoordinateSpaceSize(int width, int height) {
+		setCanvasSize(width, height);
+		context.resetTransform(getDevicePixelRatio());
+		setPixelSize(width, height);
+		this.updateCanvasColor();
+	}
+
+	protected void setCanvasSize(int width, int height) {
 		canvas.setCoordinateSpaceWidth(physicalPX(width));
 		canvas.setCoordinateSpaceHeight(physicalPX(height));
-
-		context.resetTransform(getDevicePixelRatio());
-		setWidth(width);
-		setHeight(height);
-		this.updateCanvasColor();
 	}
 
 	@Override
 	public void setCoordinateSpaceSizeNoTransformNoColor(int width, int height) {
-		canvas.setCoordinateSpaceWidth(physicalPX(width));
-		canvas.setCoordinateSpaceHeight(physicalPX(height));
-		setWidth(width);
-		setHeight(height);
+		setCanvasSize(width, height);
+		setPixelSize(width, height);
 	}
 
 	@Override
@@ -748,35 +748,27 @@ public class GGraphics2DW implements GGraphics2DWI {
 	}
 
 	/**
-	 * @param w
+	 * @param width
 	 *            CSS width in pixels
-	 */
-	public void setWidth(int w) {
-		this.canvasWidth = w;
-		canvas.setWidth(w + "px");
-	}
-
-	/**
-	 * @param h
+	 * @param height
 	 *            CSS height in pixels
 	 */
-	public void setHeight(int h) {
-		this.canvasHeight = h;
-		canvas.setHeight(h + "px");
+	public void setPixelSize(int width, int height) {
+		this.canvasWidth = width;
+		this.canvasHeight = height;
+		canvas.setPixelSize(width, height);
 	}
 
 	@Override
 	public void setPreferredSize(GDimension preferredSize) {
-		setWidth(Math.max(0, preferredSize.getWidth()));
-		setHeight(Math.max(0, preferredSize.getHeight()));
+		int width = Math.max(0, preferredSize.getWidth());
+		int height = Math.max(0, preferredSize.getHeight());
+		setPixelSize(width,	height);
 
 		// do not use getOffsetWidth here,
 		// as it is prepared by the browser and not yet ready...
 		// if preferredSize can be negative, have a check for it instead
-		setCoordinateSpaceSize(
-				(preferredSize.getWidth() >= 0) ? preferredSize.getWidth() : 0,
-				(preferredSize.getHeight() >= 0) ? preferredSize.getHeight()
-						: 0);
+		setCoordinateSpaceSize(width, height);
 	}
 
 	@Override
