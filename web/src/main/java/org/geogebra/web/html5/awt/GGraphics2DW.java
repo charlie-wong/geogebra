@@ -49,7 +49,6 @@ public class GGraphics2DW implements GGraphics2DWI {
 	GPaint currentPaint = GColor.newColor(255, 255, 255, 255);
 
 	private double[] dashArray = null;
-	private JsArrayNumber jsarrn;
 
 	private int canvasWidth;
 	private int canvasHeight;
@@ -323,11 +322,8 @@ public class GGraphics2DW implements GGraphics2DWI {
 	 *
 	 * @param svgPaint
 	 *            SVG pattern
-	 * @param lineWidth
-	 *            line width
 	 */
-	public void setPaintSVG(final GPaintSVG svgPaint, double lineWidth) {
-
+	public void setPaintSVG(final GPaintSVG svgPaint) {
 		CanvasPattern ptr = context.createPatternSVG(
 				svgPaint.getPath(), svgPaint.getStyle(), svgPaint.getWidth(),
 				svgPaint.getHeight(),
@@ -336,14 +332,13 @@ public class GGraphics2DW implements GGraphics2DWI {
 		// "stroke:black; stroke-width:1", 69.2820323028, 120);
 
 		context.setFillStyle(ptr);
-
 	}
 
 	@Override
 	public void setPaint(final GPaint paint) {
 
 		if (paint instanceof GPaintSVG) {
-			setPaintSVG((GPaintSVG) paint, context.getLineWidth());
+			setPaintSVG((GPaintSVG) paint);
 			return;
 		}
 
@@ -404,7 +399,7 @@ public class GGraphics2DW implements GGraphics2DWI {
 
 			double[] dasharr = stroke.getDashArray();
 			if (dasharr != null) {
-				jsarrn = JavaScriptObject.createArray().cast();
+				JsArrayNumber jsarrn = JavaScriptObject.createArray().cast();
 				jsarrn.setLength(dasharr.length);
 				for (int i = 0; i < dasharr.length; i++) {
 					jsarrn.set(i, dasharr[i]);
@@ -1037,7 +1032,7 @@ public class GGraphics2DW implements GGraphics2DWI {
 
 	@Override
 	public void setPreviewLayer() {
-
+		// no layers
 	}
 
 }

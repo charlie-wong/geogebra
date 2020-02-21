@@ -166,8 +166,6 @@ public class EuclidianViewW extends EuclidianView implements
 
 	private GDimension preferredSize;
 
-	private GBufferedImage cacheImage;
-
 	private ReaderWidget screenReader;
 
 	// needed to make sure outline doesn't get dashed
@@ -1578,7 +1576,6 @@ public class EuclidianViewW extends EuclidianView implements
 			} else {
 				setRotationCursor();
 			}
-			return;
 		}
 	}
 
@@ -1864,6 +1861,7 @@ public class EuclidianViewW extends EuclidianView implements
 		getApplication().getEmbedManager().setLayer(e, layer);
 	}
 
+	@Override
 	public void invalidateCache() {
 		cacheGraphics = false;
 	}
@@ -1871,6 +1869,7 @@ public class EuclidianViewW extends EuclidianView implements
 	/**
 	 * Cache all drawables
 	 */
+	@Override
 	public void cacheGraphics() {
 		cacheGraphics = true;
 	}
