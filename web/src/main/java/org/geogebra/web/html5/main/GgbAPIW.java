@@ -1445,4 +1445,24 @@ public class GgbAPIW extends GgbAPI {
 		return ((AppW) app).getFrameElement();
 	}
 
+	@Override
+	public void newConstruction() {
+		app.setWaitCursor();
+		app.fileNew();
+		app.setDefaultCursor();
+		showPerspectivesPopup((AppW) app);
+		resetPageController((AppW) app);
+	}
+
+	private void showPerspectivesPopup(AppW appW) {
+		if (!app.isUnbundledOrWhiteboard()) {
+			appW.showPerspectivesPopup();
+		}
+	}
+
+	private void resetPageController(AppW appW) {
+		if (appW.getPageController() != null) {
+			appW.getPageController().resetPageControl();
+		}
+	}
 }
