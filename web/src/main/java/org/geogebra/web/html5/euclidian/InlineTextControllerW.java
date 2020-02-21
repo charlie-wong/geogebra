@@ -14,7 +14,6 @@ import org.geogebra.common.move.ggtapi.models.json.JSONException;
 import org.geogebra.common.move.ggtapi.models.json.JSONObject;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.richtext.Editor;
-import org.geogebra.web.richtext.impl.Carota;
 import org.geogebra.web.richtext.impl.CarotaEditor;
 
 import com.google.gwt.dom.client.Element;
