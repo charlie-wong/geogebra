@@ -14,6 +14,7 @@ import org.geogebra.common.move.ggtapi.models.json.JSONException;
 import org.geogebra.common.move.ggtapi.models.json.JSONObject;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.richtext.Editor;
+import org.geogebra.web.richtext.impl.Carota;
 import org.geogebra.web.richtext.impl.CarotaEditor;
 
 import com.google.gwt.dom.client.Element;
@@ -53,12 +54,22 @@ public class InlineTextControllerW implements InlineTextController {
 			for (int i = 0; i < words.length(); i++) {
 				JSONObject word = words.optJSONObject(i);
 				if (word.has("font")) {
-					FontLoader.loadFont(word.getString("font"), view.getKernel());
+					FontLoader.loadFont(word.getString("font"), getCallback());
 				}
 			}
 		} catch (JSONException | RuntimeException e) {
 			Log.debug("cannot parse fonts");
 		}
+	}
+
+	private Runnable getCallback() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				editor.reload();
+				geo.getKernel().notifyRepaint();
+			}
+		};
 	}
 
 	@Override
@@ -148,7 +159,7 @@ public class InlineTextControllerW implements InlineTextController {
 		editor.format(key, val);
 		geo.setContent(editor.getContent());
 		if ("font".equals(key)) {
-			FontLoader.loadFont(String.valueOf(val), view.getKernel());
+			FontLoader.loadFont(String.valueOf(val), getCallback());
 		}
 	}
 
